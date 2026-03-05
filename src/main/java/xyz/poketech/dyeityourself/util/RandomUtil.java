@@ -13,7 +13,7 @@ public class RandomUtil {
         int max = DyeItYourself.CONFIG.rngUpperBoundTime.get();
 
         if(min > max || max - min < 0) {
-            DyeItYourself.LOGGER.error("Tried to get a random next dye time but min > max, min = " + min + " max = " + max);
+	        DyeItYourself.LOGGER.error("Tried to get a random next dye time but min > max, min = {} max = {}", min, max);
             return 0;
         }
         return RandomUtils.nextInt(min, max);
@@ -24,7 +24,7 @@ public class RandomUtil {
         int max = DyeItYourself.CONFIG.maxDyeDrop.get();
 
         if(min > max || max - min < 0) {
-            DyeItYourself.LOGGER.error("Tried to get a random amount of dye but min > max, min = " + min + " max = " + max);
+	        DyeItYourself.LOGGER.error("Tried to get a random amount of dye but min > max, min = {} max = {}", min, max);
             return 0;
         }
         return RandomUtils.nextInt(min, max + 1);

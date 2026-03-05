@@ -1,20 +1,18 @@
 package xyz.poketech.dyeityourself.item;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.RandomUtils;
 import xyz.poketech.dyeityourself.network.PacketHandler;
 import xyz.poketech.dyeityourself.util.color.ColorUtil;
@@ -31,26 +29,26 @@ public class DyeBrushItem extends Item {
     }
 
     @Override
-    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand) {
-        if(!playerIn.world.isRemote) {
-            if(target instanceof SheepEntity) {
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand usedHand) {
+        if(!player.level().isClientSide()) {
+            if(target instanceof Sheep) {
                 int color = NBTColorUtil.getColor(stack);
                 target.getPersistentData().putInt(NBTColorUtil.COLOR_KEY, color);
-                PacketHandler.sendColorUpdate(target.getEntityId(), color, target.getPosition(), playerIn.world.getDimensionKey(), 25);
-                return ActionResultType.SUCCESS;
+                PacketHandler.sendColorUpdate(target.getId(), color, target.blockPosition(), player.level().dimension(), 25);
+                return InteractionResult.SUCCESS;
             }
         }
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if(!playerIn.world.isRemote && playerIn.getPose() == Pose.CROUCHING) {
-            ItemStack itemStack = playerIn.getHeldItem(handIn);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        if(!player.level().isClientSide() && player.getPose() == Pose.CROUCHING) {
+            ItemStack itemStack = player.getItemInHand(usedHand);
 
             if(itemStack.getTag() == null) {
-                itemStack.setTag(new CompoundNBT());
+                itemStack.setTag(new CompoundTag());
             }
 
             int r = RandomUtils.nextInt(0, 256);
@@ -61,18 +59,21 @@ public class DyeBrushItem extends Item {
 
             itemStack.getTag().putInt(NBTColorUtil.COLOR_KEY, color);
 
-            playerIn.sendStatusMessage(new TranslationTextComponent("tooltip.dyeityourself.current_color", r, g,b), true);
+            player.displayClientMessage(Component.translatable("tooltip.dyeityourself.current_color", r, g,b)
+                    .withStyle(style -> style.withColor(color)), true);
         }
-        return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
+        return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(usedHand));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
 
-        int[] rgb = ColorUtil.toRGB(NBTColorUtil.getColor(stack));
-        tooltip.add(new StringTextComponent("WIP"));
-        tooltip.add(new TranslationTextComponent("tooltip.dyeityourself.current_color", rgb[0], rgb[1],rgb[2]));
-        tooltip.add(new TranslationTextComponent("item.dyeityourself.dye_brush.tooltip"));
+        int color = NBTColorUtil.getColor(stack);
+        int[] rgb = ColorUtil.toRGB(color);
+        tooltipComponents.add(Component.literal("WIP"));
+        tooltipComponents.add(Component.translatable("tooltip.dyeityourself.current_color", rgb[0], rgb[1],rgb[2])
+                .withStyle(style -> style.withColor(color)));
+        tooltipComponents.add(Component.translatable("item.dyeityourself.dye_brush.tooltip"));
     }
 }

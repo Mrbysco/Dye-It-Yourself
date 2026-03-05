@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[47,)"
 issueTrackerURL="http://github.com/cazsius/dye-it-yourself/issues"
 license="GPL-3.0"
 [[mods]] #mandatory
@@ -18,12 +18,12 @@ Lets the sheep dye themselves.
 [[dependencies.dyeityourself]]
     modId="forge"
     mandatory=true
-    versionRange="[31,)"
+    versionRange="[47,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.dyeityourself]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,)"
+    versionRange="[1.20.1,)"
     ordering="NONE"
     side="BOTH"

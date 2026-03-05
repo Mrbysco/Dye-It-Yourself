@@ -1,13 +1,14 @@
 package xyz.poketech.dyeityourself.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class WorldUtil {
 
@@ -18,18 +19,18 @@ public class WorldUtil {
      * @param pos   the position to check
      * @return if there's a flower at the given position
      */
-    public static boolean isFlower(World world, BlockPos pos) {
-        return BlockTags.SMALL_FLOWERS.contains(world.getBlockState(pos).getBlock());
+    public static boolean isFlower(Level world, BlockPos pos) {
+        return ForgeRegistries.BLOCKS.tags().getTag(BlockTags.SMALL_FLOWERS).contains(world.getBlockState(pos).getBlock());
     }
 
     /**
      * Checks if the entity is on a flower
      *
-     * @param entity
-     * @return
+     * @param entity the entity to check
+     * @return if the entity is on a flower
      */
     public static boolean isEntityOnFlower(Entity entity) {
-        return isFlower(entity.world, new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ()));
+        return isFlower(entity.level(), entity.blockPosition());
     }
 
     /**
@@ -39,13 +40,13 @@ public class WorldUtil {
      * @param pos   the position of the flower
      * @return the ItemStack of the flower
      */
-    public static ItemStack getItemStackForBlockAt(World world, BlockPos pos, BlockState state) {
-        return world.getBlockState(pos).getBlock().getPickBlock(state, null, world, pos, null);
+    public static ItemStack getItemStackForBlockAt(Level world, BlockPos pos, BlockState state) {
+        return world.getBlockState(pos).getBlock().getCloneItemStack(state, null, world, pos, null);
     }
 
 
-    public static void spawnItem(World world, BlockPos pos, Item item) {
+    public static void spawnItem(Level world, BlockPos pos, Item item) {
         //TODO: change the ammount in the config (or let it be random)
-        world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(item)));
+        world.addFreshEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(item)));
     }
 }

@@ -1,11 +1,11 @@
 package xyz.poketech.dyeityourself.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -18,7 +18,7 @@ public class UpdateColorPacket {
     }
 
     public UpdateColorPacket(Entity entityIn, int color) {
-        this(entityIn.getEntityId(), color);
+        this(entityIn.getId(), color);
     }
 
     public UpdateColorPacket(int entityId, int color) {
@@ -26,18 +26,18 @@ public class UpdateColorPacket {
         this.color = color;
     }
 
-    public UpdateColorPacket(PacketBuffer buf) {
+    public UpdateColorPacket(FriendlyByteBuf buf) {
         this(buf.readInt(), buf.readInt());
     }
 
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
         buf.writeInt(this.color);
     }
 
 
-    public Entity getEntity(World worldIn) {
-        return worldIn.getEntityByID(this.entityId);
+    public Entity getEntity(Level worldIn) {
+        return worldIn.getEntity(this.entityId);
     }
 
     public int getColor() {

@@ -1,11 +1,11 @@
 package xyz.poketech.dyeityourself.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 import xyz.poketech.dyeityourself.DyeItYourself;
 import xyz.poketech.dyeityourself.util.color.NBTColorUtil;
 
@@ -23,22 +23,22 @@ public class RequestColorPacket {
     }
 
     RequestColorPacket(Entity entity) {
-        this.entityID = entity.getEntityId();
+        this.entityID = entity.getId();
     }
 
-    public RequestColorPacket(PacketBuffer buf) {
+    public RequestColorPacket(FriendlyByteBuf buf) {
         this(buf.readInt());
     }
 
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeInt(entityID);
     }
 
     public void onMessage(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity serverPlayer = ctx.get().getSender();
+            ServerPlayer serverPlayer = ctx.get().getSender();
             if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_SERVER && serverPlayer != null) {
-                Entity entity = serverPlayer.getServerWorld().getEntityByID(this.entityID);
+                Entity entity = serverPlayer.level().getEntity(this.entityID);
                 if (entity != null && entity.getPersistentData().contains(NBTColorUtil.COLOR_KEY)) {
                     int color = entity.getPersistentData().getInt(NBTColorUtil.COLOR_KEY);
                     DyeItYourself.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), new UpdateColorPacket(this.entityID, color));

@@ -1,8 +1,8 @@
 package xyz.poketech.dyeityourself.util.color;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
 public class NBTColorUtil {
 
@@ -29,7 +29,7 @@ public class NBTColorUtil {
                 stack.getTag().putInt(COLOR_KEY, WHITE);
             }
         } else {
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag tag = new CompoundTag();
             tag.putInt(COLOR_KEY, WHITE);
             stack.setTag(tag);
         }

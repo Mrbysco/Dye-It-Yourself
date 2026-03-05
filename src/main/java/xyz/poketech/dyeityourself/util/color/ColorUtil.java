@@ -1,8 +1,7 @@
 package xyz.poketech.dyeityourself.util.color;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,7 +52,7 @@ public final class ColorUtil {
     }
 
     public static int getRGB(@Nonnull Vector3f rgb) {
-        return getRGB(rgb.getX(), rgb.getY(), rgb.getZ());
+        return getRGB(rgb.x(), rgb.y(), rgb.z());
     }
 
     public static int getRGB(float r, float g, float b) {
@@ -61,7 +60,7 @@ public final class ColorUtil {
     }
 
     public static int getRGBA(@Nonnull Vector4f col) {
-        return getRGBA(col.getX(), col.getY(), col.getZ(), col.getW());
+        return getRGBA(col.x(), col.y(), col.z(), col.w());
     }
 
     public static int getRGBA(float r, float g, float b, float a) {
@@ -93,7 +92,7 @@ public final class ColorUtil {
         float red = (color >> 16 & 255) / 255.0F;
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
-        RenderSystem.color4f(red, green, blue, 1.0F);
+//        RenderSystem.color4f(red, green, blue, 1.0F);
     }
 
     public static int toHex(int r, int g, int b) {

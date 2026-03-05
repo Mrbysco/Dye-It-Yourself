@@ -1,13 +1,13 @@
 package xyz.poketech.dyeityourself.handler;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,13 +22,12 @@ public class LivingHandler {
     public static final String NEXT_DYE_KEY = "nextDye";
 
     @SubscribeEvent
-    public static void onEntityEnterWorld(EntityJoinWorldEvent event) {
+    public static void onEntityEnterWorld(EntityJoinLevelEvent event) {
         //Sync the sheep color on the client
-        if (event.getEntity() instanceof SheepEntity) {
-            SheepEntity sheep = ((SheepEntity) event.getEntity());
+        if (event.getEntity() instanceof Sheep sheep) {
 
-            if (event.getWorld().isRemote) {
-                DyeItYourself.NETWORK.sendToServer(new RequestColorPacket(event.getEntity().getEntityId()));
+	        if (event.getLevel().isClientSide()) {
+                DyeItYourself.NETWORK.sendToServer(new RequestColorPacket(event.getEntity().getId()));
             }
 
             else if (DyeItYourself.CONFIG.sheepEatFlowers.get()) {
@@ -38,12 +37,10 @@ public class LivingHandler {
     }
 
     @SubscribeEvent
-    public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (!entity.world.isRemote && DyeItYourself.CONFIG.doDropDye.get() && entity instanceof SheepEntity) {
-
-            SheepEntity sheep = (SheepEntity) event.getEntityLiving();
-            CompoundNBT data = sheep.getPersistentData();
+    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!entity.level().isClientSide() && DyeItYourself.CONFIG.doDropDye.get() && entity instanceof Sheep sheep) {
+            CompoundTag data = sheep.getPersistentData();
 
             if (data.contains(NEXT_DYE_KEY)) {
                 int nextDye = data.getInt(NEXT_DYE_KEY);
@@ -51,11 +48,11 @@ public class LivingHandler {
                     //Spawn a random amount of dye
                     int count = RandomUtil.getDyeDropAmountSafe();
                     if (count != 0) {
-                        InventoryHelper.spawnItemStack(sheep.world, sheep.getPosX(), sheep.getPosY(), sheep.getPosZ(), new ItemStack(DyeItem.getItem(sheep.getFleeceColor()), count));
+                        Containers.dropItemStack(sheep.level(), sheep.getX(), sheep.getY(), sheep.getZ(), new ItemStack(DyeItem.byColor(sheep.getColor()), count));
 
                         //Play the chicken egg sound
-                        float pitch = (sheep.getRNG().nextFloat() - sheep.getRNG().nextFloat()) * 0.2F + 1.0F;
-                        sheep.playSound(SoundEvents.ENTITY_CHICKEN_EGG, 1.0F, pitch);
+                        float pitch = (sheep.getRandom().nextFloat() - sheep.getRandom().nextFloat()) * 0.2F + 1.0F;
+                        sheep.playSound(SoundEvents.CHICKEN_EGG, 1.0F, pitch);
                     }
 
                     //Set new dye

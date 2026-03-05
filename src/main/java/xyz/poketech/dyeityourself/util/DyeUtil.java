@@ -1,18 +1,13 @@
 package xyz.poketech.dyeityourself.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,9 +16,9 @@ public class DyeUtil {
 
     private static Map<BlockState, DyeColor> stateColorCache = new HashMap<>();
 
-    public static DyeColor getDyeForFlowerAt(World world, BlockPos pos) {
+    public static DyeColor getDyeForFlowerAt(Level level, BlockPos pos) {
 
-    	BlockState state = world.getBlockState(pos);
+    	BlockState state = level.getBlockState(pos);
     	
     	// If possible, return early from the cache.
     	if (stateColorCache.containsKey(state)) {
@@ -32,25 +27,19 @@ public class DyeUtil {
     	}
     	
         //Grab the flower as an ItemStack
-        ItemStack stack = WorldUtil.getItemStackForBlockAt(world, pos, state);
+        ItemStack stack = WorldUtil.getItemStackForBlockAt(level, pos, state);
 
-        ItemStack dye = getFlowerDye(stack, world);
+        ItemStack dye = getFlowerDye(stack, level);
         DyeColor color = DyeColor.getColor(dye);
         stateColorCache.put(state, color);
         return color;
     }
 
-    private static ItemStack getFlowerDye(ItemStack stack, World world) {
+    private static ItemStack getFlowerDye(ItemStack stack, Level level) {
         //Simulate the crafting of a dye from a flower
-        CraftingInventory inv = new CraftingInventory(new Container(ContainerType.CRAFTING, 0) {
-            @Override
-            public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-                return false;
-            }
-        }, 1, 1);
-        inv.setInventorySlotContents(0, stack);
-        Optional<ICraftingRecipe> recipe = world.getRecipeManager().getRecipe(
-                IRecipeType.CRAFTING, inv, world);
-        return recipe.map(iCraftingRecipe -> iCraftingRecipe.getCraftingResult(inv)).orElse(null);
+        FakeContainer inv = new FakeContainer(stack);
+        Optional<CraftingRecipe> recipe = level.getRecipeManager().getRecipeFor(
+                RecipeType.CRAFTING, inv, level);
+        return recipe.map(iCraftingRecipe -> iCraftingRecipe.assemble(inv, level.registryAccess())).orElse(null);
     }
 }

@@ -1,10 +1,9 @@
 package xyz.poketech.dyeityourself;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import xyz.poketech.dyeityourself.item.DyeBrushItem;
 
 public class DIYItems {
@@ -13,7 +12,7 @@ public class DIYItems {
 
     public static final RegistryObject<Item> DYE_BRUSH = ITEMS.register("dye_brush", () ->
             new DyeBrushItem(
-                    new Item.Properties().group(ItemGroup.TOOLS).maxStackSize(1)
+                    new Item.Properties().stacksTo(1)
             )
     );
 
