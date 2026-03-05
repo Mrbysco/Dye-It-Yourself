@@ -1,21 +1,12 @@
 package xyz.poketech.dyeityourself.util.color;
 
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-
 public final class ColorUtil {
 
-    public static @Nonnull
-    Vector4f toFloat(@Nonnull Color color) {
-        float[] rgba = color.getComponents(null);
-        return new Vector4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-
-    public static @Nonnull
+    public static @NotNull
     Vector3f toFloat(int rgb) {
         int r = rgb >> 16 & 255;
         int g = rgb >> 8 & 255;
@@ -23,7 +14,7 @@ public final class ColorUtil {
         return new Vector3f(r / 255F, g / 255F, b / 255F);
     }
 
-    public static @Nonnull Vector4f toFloat4(int rgb) {
+    public static @NotNull Vector4f toFloat4(int rgb) {
         int r = rgb >> 16 & 255;
         int g = rgb >> 8 & 255;
         int b = rgb & 255;
@@ -38,20 +29,7 @@ public final class ColorUtil {
         return new int[]{r,g,b};
     }
 
-    public static int getRGB(@Nullable Color color) {
-        // Note: Constants in java.awt.Color are not @Nonnull-annotated
-        return color == null ? 0 : getRGB(color.getRed(), color.getGreen(), color.getBlue());
-    }
-
-    public static int getRGBA(@Nullable Color color) {
-        return color == null ? 0 : getRGBA(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-    }
-
-    public static int getARGB(@Nullable Color color) {
-        return color == null ? 0 : getRGBA(color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
-    }
-
-    public static int getRGB(@Nonnull Vector3f rgb) {
+    public static int getRGB(@NotNull Vector3f rgb) {
         return getRGB(rgb.x(), rgb.y(), rgb.z());
     }
 
@@ -59,7 +37,7 @@ public final class ColorUtil {
         return getRGB((int) (r * 255), (int) (g * 255), (int) (b * 255));
     }
 
-    public static int getRGBA(@Nonnull Vector4f col) {
+    public static int getRGBA(@NotNull Vector4f col) {
         return getRGBA(col.x(), col.y(), col.z(), col.w());
     }
 
@@ -81,18 +59,6 @@ public final class ColorUtil {
 
     public static int getRGBA(int r, int g, int b, int a) {
         return (r & 0xFF) << 24 | (g & 0xFF) << 16 | (b & 0xFF) << 8 | (a & 0xFF);
-    }
-
-    /**
-     * Turns an int into a glColor4f function
-     *
-     * @author Buildcraft team
-     */
-    public static void setGLColorFromInt(int color) {
-        float red = (color >> 16 & 255) / 255.0F;
-        float green = (color >> 8 & 255) / 255.0F;
-        float blue = (color & 255) / 255.0F;
-//        RenderSystem.color4f(red, green, blue, 1.0F);
     }
 
     public static int toHex(int r, int g, int b) {

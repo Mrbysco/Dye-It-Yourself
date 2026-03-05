@@ -1,14 +1,17 @@
 package xyz.poketech.dyeityourself.util;
 
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,9 +40,9 @@ public class DyeUtil {
 
     private static ItemStack getFlowerDye(ItemStack stack, Level level) {
         //Simulate the crafting of a dye from a flower
-        FakeContainer inv = new FakeContainer(stack);
-        Optional<CraftingRecipe> recipe = level.getRecipeManager().getRecipeFor(
+	    CraftingInput inv = CraftingInput.of(1, 1, List.of(stack));
+        Optional<RecipeHolder<CraftingRecipe>> recipe = level.getRecipeManager().getRecipeFor(
                 RecipeType.CRAFTING, inv, level);
-        return recipe.map(iCraftingRecipe -> iCraftingRecipe.assemble(inv, level.registryAccess())).orElse(null);
+        return recipe.map(iCraftingRecipe -> iCraftingRecipe.value().assemble(inv, level.registryAccess())).orElse(null);
     }
 }

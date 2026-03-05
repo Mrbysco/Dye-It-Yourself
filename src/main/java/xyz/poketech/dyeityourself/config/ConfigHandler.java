@@ -1,6 +1,6 @@
-package xyz.poketech.dyeityourself;
+package xyz.poketech.dyeityourself.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ConfigHandler {
 
@@ -18,7 +18,7 @@ public class ConfigHandler {
 
     final public ConfigHelper.ConfigValueListener<Boolean> sheepAbsorbColor;
 
-    public ConfigHandler(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
+    public ConfigHandler(ModConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
         builder.push("general");
         sheepEatFlowers = subscriber.subscribe(builder
                 .comment("Sheep eat flowers")

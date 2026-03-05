@@ -18,14 +18,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package xyz.poketech.dyeityourself;
+package xyz.poketech.dyeityourself.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -41,27 +41,19 @@ import java.util.function.Supplier;
  */
 public class ConfigHelper
 {
-    /** as with the other register method, but the contexts are assumed **/
-    public static <T> T register(
-            final ModConfig.Type configType,
-            final BiFunction<ForgeConfigSpec.Builder, Subscriber, T> configBuilder)
-    {
-        return register(ModLoadingContext.get(), FMLJavaModLoadingContext.get(), configType, configBuilder);
-    }
-
     /** call this in either your @Mod class constructor or in FMLCommonSetupEvent or in FMLClientSetupEvent **/
     public static <T> T register(
-            final ModLoadingContext modContext,
-            final FMLJavaModLoadingContext fmlContext,
+            final IEventBus eventBus,
+            final ModContainer modContainer,
             final ModConfig.Type configType,
-            final BiFunction<ForgeConfigSpec.Builder, Subscriber, T> configBuilder)
+            final BiFunction<ModConfigSpec.Builder, Subscriber, T> configBuilder)
     {
         final List<ConfigValueListener<?>> subscriptionList = new ArrayList<>();
-        final Pair<T, ForgeConfigSpec> entry = new ForgeConfigSpec.Builder().configure(builder -> configBuilder.apply(builder, getSubscriber(subscriptionList)));
+        final Pair<T, ModConfigSpec> entry = new ModConfigSpec.Builder().configure(builder -> configBuilder.apply(builder, getSubscriber(subscriptionList)));
         final T config = entry.getLeft();
-        final ForgeConfigSpec spec = entry.getRight();
+        final ModConfigSpec spec = entry.getRight();
 
-        modContext.registerConfig(configType, spec);
+        modContainer.registerConfig(configType, spec);
 
         final Consumer<ModConfigEvent> configUpdate = event ->
         {
@@ -70,7 +62,7 @@ public class ConfigHelper
                     value.update();
         };
 
-        fmlContext.getModEventBus().addListener(configUpdate);
+        eventBus.addListener(configUpdate);
 
         return config;
     }

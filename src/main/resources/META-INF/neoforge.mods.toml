@@ -1,13 +1,13 @@
 modLoader="javafml"
-loaderVersion="[47,)"
-issueTrackerURL="http://github.com/cazsius/dye-it-yourself/issues"
+loaderVersion="[4,)"
+issueTrackerURL="https://github.com/Mrbysco/Dye-It-Yourself/issues"
 license="GPL-3.0"
 [[mods]] #mandatory
     modId="dyeityourself"
     version="${file.jarVersion}"
     displayName="Dye It Yourself"
-    updateJSONURL="http://raw.githubusercontent.com/Cazsius/Dye-It-Yourself/master/update.json"
-    displayURL="https:curseforge.com/minecraft/mc-mods/dye-it-yourself"
+    updateJSONURL="http://raw.githubusercontent.com/Mrbysco/Dye-It-Yourself/master/update.json"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/dye-it-yourself"
     #logoFile="logo.png"
     credits=""
     authors="Poke1650, Cazsius, Willbl3pic, Tfarcenim"
@@ -16,14 +16,14 @@ Lets the sheep dye themselves.
 '''
 
 [[dependencies.dyeityourself]]
-    modId="forge"
-    mandatory=true
-    versionRange="[47,)"
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.dyeityourself]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.1,)"
+    type="required"
+    versionRange="[1.21.1,)"
     ordering="NONE"
     side="BOTH"

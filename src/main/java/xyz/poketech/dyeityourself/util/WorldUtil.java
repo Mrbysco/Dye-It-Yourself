@@ -1,14 +1,13 @@
 package xyz.poketech.dyeityourself.util;
 
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class WorldUtil {
 
@@ -20,7 +19,7 @@ public class WorldUtil {
      * @return if there's a flower at the given position
      */
     public static boolean isFlower(Level world, BlockPos pos) {
-        return ForgeRegistries.BLOCKS.tags().getTag(BlockTags.SMALL_FLOWERS).contains(world.getBlockState(pos).getBlock());
+        return world.getBlockState(pos).is(BlockTags.SMALL_FLOWERS);
     }
 
     /**

@@ -2,7 +2,8 @@ package xyz.poketech.dyeityourself.util.color;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import xyz.poketech.dyeityourself.registry.DIYAttachments;
+import xyz.poketech.dyeityourself.registry.DIYDataComponents;
 
 public class NBTColorUtil {
 
@@ -10,7 +11,7 @@ public class NBTColorUtil {
     private static final int WHITE = ColorUtil.getRGB(255, 255, 255);
 
     public static void setEntityColor(Entity entity, int color) {
-        entity.getPersistentData().putInt(COLOR_KEY, color);
+        entity.setData(DIYAttachments.COLOR, color);
     }
 
     public static void setEntityColor(Entity entity, int r, int g, int b) {
@@ -18,20 +19,14 @@ public class NBTColorUtil {
     }
 
     public static void removeEntityColor(Entity entity) {
-        entity.getPersistentData().remove(COLOR_KEY);
+        entity.removeData(DIYAttachments.COLOR);
     }
 
     public static int getColor(ItemStack stack) {
-        if(stack.getTag() != null) {
-            if(stack.getTag().contains(COLOR_KEY)) {
-                return stack.getTag().getInt(COLOR_KEY);
-            } else {
-                stack.getTag().putInt(COLOR_KEY, WHITE);
-            }
+        if (stack.has(DIYDataComponents.COLOR)) {
+            return stack.get(DIYDataComponents.COLOR).intValue();
         } else {
-            CompoundTag tag = new CompoundTag();
-            tag.putInt(COLOR_KEY, WHITE);
-            stack.setTag(tag);
+            stack.set(DIYDataComponents.COLOR, WHITE);
         }
         return WHITE;
     }

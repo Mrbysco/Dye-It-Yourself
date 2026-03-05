@@ -1,10 +1,10 @@
 package xyz.poketech.dyeityourself.ai;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import xyz.poketech.dyeityourself.DyeItYourself;
@@ -12,8 +12,6 @@ import xyz.poketech.dyeityourself.util.DyeUtil;
 import xyz.poketech.dyeityourself.util.WorldUtil;
 
 import java.util.EnumSet;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 public class EatFlowerGoal extends Goal {
 

@@ -3,20 +3,19 @@ package xyz.poketech.dyeityourself.handler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Containers;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import xyz.poketech.dyeityourself.DyeItYourself;
 import xyz.poketech.dyeityourself.ai.EatFlowerGoal;
-import xyz.poketech.dyeityourself.network.RequestColorPacket;
 import xyz.poketech.dyeityourself.util.RandomUtil;
 
-@Mod.EventBusSubscriber(modid = DyeItYourself.MODID)
+@EventBusSubscriber(modid = DyeItYourself.MODID)
 public class LivingHandler {
 
     public static final String NEXT_DYE_KEY = "nextDye";
@@ -25,20 +24,15 @@ public class LivingHandler {
     public static void onEntityEnterWorld(EntityJoinLevelEvent event) {
         //Sync the sheep color on the client
         if (event.getEntity() instanceof Sheep sheep) {
-
-	        if (event.getLevel().isClientSide()) {
-                DyeItYourself.NETWORK.sendToServer(new RequestColorPacket(event.getEntity().getId()));
-            }
-
-            else if (DyeItYourself.CONFIG.sheepEatFlowers.get()) {
+	        if (!event.getLevel().isClientSide()) {
                 sheep.goalSelector.addGoal(5, new EatFlowerGoal(sheep));
             }
         }
     }
 
     @SubscribeEvent
-    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
-        LivingEntity entity = event.getEntity();
+    public static void onLivingUpdate(EntityTickEvent.Pre event) {
+        Entity entity = event.getEntity();
         if (!entity.level().isClientSide() && DyeItYourself.CONFIG.doDropDye.get() && entity instanceof Sheep sheep) {
             CompoundTag data = sheep.getPersistentData();
 

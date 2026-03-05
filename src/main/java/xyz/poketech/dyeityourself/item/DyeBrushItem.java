@@ -1,6 +1,5 @@
 package xyz.poketech.dyeityourself.item;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -14,12 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.RandomUtils;
-import xyz.poketech.dyeityourself.network.PacketHandler;
+import xyz.poketech.dyeityourself.registry.DIYAttachments;
+import xyz.poketech.dyeityourself.registry.DIYDataComponents;
 import xyz.poketech.dyeityourself.util.color.ColorUtil;
 import xyz.poketech.dyeityourself.util.color.NBTColorUtil;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class DyeBrushItem extends Item {
@@ -33,8 +32,7 @@ public class DyeBrushItem extends Item {
         if(!player.level().isClientSide()) {
             if(target instanceof Sheep) {
                 int color = NBTColorUtil.getColor(stack);
-                target.getPersistentData().putInt(NBTColorUtil.COLOR_KEY, color);
-                PacketHandler.sendColorUpdate(target.getId(), color, target.blockPosition(), player.level().dimension(), 25);
+                target.setData(DIYAttachments.COLOR, color);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -47,17 +45,13 @@ public class DyeBrushItem extends Item {
         if(!player.level().isClientSide() && player.getPose() == Pose.CROUCHING) {
             ItemStack itemStack = player.getItemInHand(usedHand);
 
-            if(itemStack.getTag() == null) {
-                itemStack.setTag(new CompoundTag());
-            }
-
             int r = RandomUtils.nextInt(0, 256);
             int g = RandomUtils.nextInt(0, 256);
             int b = RandomUtils.nextInt(0, 256);
 
             int color = ColorUtil.getRGB(r,g,b);
 
-            itemStack.getTag().putInt(NBTColorUtil.COLOR_KEY, color);
+            itemStack.set(DIYDataComponents.COLOR, color);
 
             player.displayClientMessage(Component.translatable("tooltip.dyeityourself.current_color", r, g,b)
                     .withStyle(style -> style.withColor(color)), true);
@@ -66,8 +60,8 @@ public class DyeBrushItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
 
         int color = NBTColorUtil.getColor(stack);
         int[] rgb = ColorUtil.toRGB(color);
