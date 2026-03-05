@@ -2,9 +2,10 @@ package xyz.poketech.dyeityourself;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -37,20 +38,20 @@ public final class DyeItYourself {
     public DyeItYourself() {
         IEventBus eventBus =  FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
-        eventBus.addListener(this::addLayers);
         eventBus.addListener(this::addTabContents);
 
         DIYItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONFIG = ConfigHelper.register(ModConfig.Type.SERVER, ConfigHandler::new);
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            eventBus.addListener(DistHelper::addRenderLayers);
+        });
     }
 
     public void setup(FMLCommonSetupEvent e) {
         PacketHandler.registerMessages();
     }
 
-    public void addLayers(EntityRenderersEvent.AddLayers e) {
-        DistHelper.addRenderLayers(e);
-    }
 
     public void addTabContents(final BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
