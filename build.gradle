@@ -9,7 +9,7 @@ plugins {
 version = "${version}-${mc_version}"
 group = "${mod_group}"
 base {
-    archivesName = "${mod_archive_name}-${mc_version}"
+    archivesName = "${mod_archive_name}"
 }
 
 
