@@ -1,12 +1,13 @@
 package xyz.poketech.dyeityourself.ai;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import xyz.poketech.dyeityourself.DyeItYourself;
 import xyz.poketech.dyeityourself.util.DyeUtil;
 import xyz.poketech.dyeityourself.util.WorldUtil;
@@ -87,9 +88,9 @@ public class EatFlowerGoal extends Goal {
             BlockPos blockpos = getBlockPos();
 
             if (WorldUtil.isEntityOnFlower(this.flowerEaterEntity)) {
-
-                DyeColor color = DyeUtil.getDyeForFlowerAt(this.entityWorld, blockpos);
-                if (this.entityWorld.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                ServerLevel serverLevel = getServerLevel(this.entityWorld);
+                DyeColor color = DyeUtil.getDyeForFlowerAt(serverLevel, blockpos);
+                if (serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
                     this.entityWorld.destroyBlock(blockpos, false);
                 }
 

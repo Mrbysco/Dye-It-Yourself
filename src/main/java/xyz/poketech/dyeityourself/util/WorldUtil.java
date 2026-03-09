@@ -40,7 +40,7 @@ public class WorldUtil {
      * @return the ItemStack of the flower
      */
     public static ItemStack getItemStackForBlockAt(Level world, BlockPos pos, BlockState state) {
-        return world.getBlockState(pos).getBlock().getCloneItemStack(state, null, world, pos, null);
+        return world.getBlockState(pos).getBlock().getCloneItemStack(world, pos, state, false, null);
     }
 
 

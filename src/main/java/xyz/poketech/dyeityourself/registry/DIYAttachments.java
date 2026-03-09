@@ -15,5 +15,5 @@ public class DIYAttachments {
 
 	public static final Supplier<AttachmentType<Integer>> COLOR = ATTACHMENT_TYPES.register(
 			"color", () -> AttachmentType.builder(() -> ColorUtil.getRGB(255, 255, 255))
-					.serialize(Codec.INT).sync(ByteBufCodecs.INT).build());
+					.serialize(Codec.INT.fieldOf("color")).sync(ByteBufCodecs.INT).build());
 }

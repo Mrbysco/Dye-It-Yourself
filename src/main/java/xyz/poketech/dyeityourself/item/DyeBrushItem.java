@@ -3,23 +3,23 @@ package xyz.poketech.dyeityourself.item;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.RandomUtils;
+import org.jetbrains.annotations.NotNull;
 import xyz.poketech.dyeityourself.registry.DIYAttachments;
 import xyz.poketech.dyeityourself.registry.DIYDataComponents;
 import xyz.poketech.dyeityourself.util.color.ColorUtil;
 import xyz.poketech.dyeityourself.util.color.NBTColorUtil;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class DyeBrushItem extends Item {
 
@@ -39,11 +39,11 @@ public class DyeBrushItem extends Item {
         return InteractionResult.FAIL;
     }
 
+    @NotNull
     @Override
-    @Nonnull
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if(!player.level().isClientSide() && player.getPose() == Pose.CROUCHING) {
-            ItemStack itemStack = player.getItemInHand(usedHand);
+            ItemStack itemStack = player.getItemInHand(hand);
 
             int r = RandomUtils.nextInt(0, 256);
             int g = RandomUtils.nextInt(0, 256);
@@ -56,18 +56,17 @@ public class DyeBrushItem extends Item {
             player.displayClientMessage(Component.translatable("tooltip.dyeityourself.current_color", r, g,b)
                     .withStyle(style -> style.withColor(color)), true);
         }
-        return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(usedHand));
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
+                                Consumer<Component> tooltipAdder, TooltipFlag flag) {
         int color = NBTColorUtil.getColor(stack);
         int[] rgb = ColorUtil.toRGB(color);
-        tooltipComponents.add(Component.literal("WIP"));
-        tooltipComponents.add(Component.translatable("tooltip.dyeityourself.current_color", rgb[0], rgb[1],rgb[2])
+        tooltipAdder.accept(Component.literal("WIP"));
+        tooltipAdder.accept(Component.translatable("tooltip.dyeityourself.current_color", rgb[0], rgb[1],rgb[2])
                 .withStyle(style -> style.withColor(color)));
-        tooltipComponents.add(Component.translatable("item.dyeityourself.dye_brush.tooltip"));
+        tooltipAdder.accept(Component.translatable("item.dyeityourself.dye_brush.tooltip"));
     }
 }

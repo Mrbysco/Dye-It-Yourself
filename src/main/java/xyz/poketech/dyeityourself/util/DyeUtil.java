@@ -1,6 +1,7 @@
 package xyz.poketech.dyeityourself.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -19,9 +20,9 @@ public class DyeUtil {
 
     private static Map<BlockState, DyeColor> stateColorCache = new HashMap<>();
 
-    public static DyeColor getDyeForFlowerAt(Level level, BlockPos pos) {
+    public static DyeColor getDyeForFlowerAt(ServerLevel serverLevel, BlockPos pos) {
 
-    	BlockState state = level.getBlockState(pos);
+    	BlockState state = serverLevel.getBlockState(pos);
     	
     	// If possible, return early from the cache.
     	if (stateColorCache.containsKey(state)) {
@@ -30,19 +31,19 @@ public class DyeUtil {
     	}
     	
         //Grab the flower as an ItemStack
-        ItemStack stack = WorldUtil.getItemStackForBlockAt(level, pos, state);
+        ItemStack stack = WorldUtil.getItemStackForBlockAt(serverLevel, pos, state);
 
-        ItemStack dye = getFlowerDye(stack, level);
+        ItemStack dye = getFlowerDye(stack, serverLevel);
         DyeColor color = DyeColor.getColor(dye);
         stateColorCache.put(state, color);
         return color;
     }
 
-    private static ItemStack getFlowerDye(ItemStack stack, Level level) {
+    private static ItemStack getFlowerDye(ItemStack stack, ServerLevel serverLevel) {
         //Simulate the crafting of a dye from a flower
 	    CraftingInput inv = CraftingInput.of(1, 1, List.of(stack));
-        Optional<RecipeHolder<CraftingRecipe>> recipe = level.getRecipeManager().getRecipeFor(
-                RecipeType.CRAFTING, inv, level);
-        return recipe.map(iCraftingRecipe -> iCraftingRecipe.value().assemble(inv, level.registryAccess())).orElse(null);
+        Optional<RecipeHolder<CraftingRecipe>> recipe = serverLevel.recipeAccess().getRecipeFor(
+                RecipeType.CRAFTING, inv, serverLevel);
+        return recipe.map(iCraftingRecipe -> iCraftingRecipe.value().assemble(inv, serverLevel.registryAccess())).orElse(null);
     }
 }

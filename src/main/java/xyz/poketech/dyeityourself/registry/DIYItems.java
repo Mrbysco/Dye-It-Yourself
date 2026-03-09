@@ -11,7 +11,7 @@ public class DIYItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(DyeItYourself.MODID);
 
     public static final DeferredItem<DyeBrushItem> DYE_BRUSH = ITEMS.registerItem("dye_brush", DyeBrushItem::new,
-            new Item.Properties().stacksTo(1)
+            () -> new Item.Properties().stacksTo(1)
     );
 
 }

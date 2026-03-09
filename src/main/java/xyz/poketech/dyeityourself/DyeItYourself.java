@@ -1,7 +1,6 @@
 package xyz.poketech.dyeityourself;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -37,9 +36,5 @@ public final class DyeItYourself {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(DIYItems.DYE_BRUSH.get());
         }
-    }
-
-    public static ResourceLocation modLoc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

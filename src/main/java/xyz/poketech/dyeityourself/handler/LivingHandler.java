@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,7 +37,7 @@ public class LivingHandler {
             CompoundTag data = sheep.getPersistentData();
 
             if (data.contains(NEXT_DYE_KEY)) {
-                int nextDye = data.getInt(NEXT_DYE_KEY);
+                int nextDye = data.getIntOr(NEXT_DYE_KEY, 0);
                 if (nextDye == 1) {
                     //Spawn a random amount of dye
                     int count = RandomUtil.getDyeDropAmountSafe();
