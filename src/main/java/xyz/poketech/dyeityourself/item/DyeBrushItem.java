@@ -53,8 +53,8 @@ public class DyeBrushItem extends Item {
 
             itemStack.set(DIYDataComponents.COLOR, color);
 
-            player.displayClientMessage(Component.translatable("tooltip.dyeityourself.current_color", r, g,b)
-                    .withStyle(style -> style.withColor(color)), true);
+            player.sendOverlayMessage(Component.translatable("tooltip.dyeityourself.current_color", r, g,b)
+                    .withStyle(style -> style.withColor(color)));
         }
         return super.use(level, player, hand);
     }

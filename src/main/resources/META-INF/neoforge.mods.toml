@@ -18,12 +18,12 @@ Lets the sheep dye themselves.
 [[dependencies.dyeityourself]]
     modId="neoforge"
     type="required"
-    versionRange="[21.11.0-beta,)"
+    versionRange="[26.1.1.0-alpha,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.dyeityourself]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.11,)"
+    versionRange="[26.1.1,)"
     ordering="NONE"
     side="BOTH"

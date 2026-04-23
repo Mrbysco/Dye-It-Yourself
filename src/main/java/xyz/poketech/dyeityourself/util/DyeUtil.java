@@ -8,7 +8,6 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -44,6 +43,6 @@ public class DyeUtil {
 	    CraftingInput inv = CraftingInput.of(1, 1, List.of(stack));
         Optional<RecipeHolder<CraftingRecipe>> recipe = serverLevel.recipeAccess().getRecipeFor(
                 RecipeType.CRAFTING, inv, serverLevel);
-        return recipe.map(iCraftingRecipe -> iCraftingRecipe.value().assemble(inv, serverLevel.registryAccess())).orElse(null);
+        return recipe.map(iCraftingRecipe -> iCraftingRecipe.value().assemble(inv)).orElse(null);
     }
 }
